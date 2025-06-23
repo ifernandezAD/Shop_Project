@@ -14,7 +14,7 @@ public class GameCalendar : MonoBehaviour
     private readonly int totalDays = 90;
     private readonly int daysPerWeek = 7;
 
-    private string[] monthNames = { "June", "July", "August" };
+    private string[] monthNames = { "Veltrum", "Noxar", "Syrr" };
 
 
     private void OnValidate()
