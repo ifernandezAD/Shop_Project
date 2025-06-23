@@ -14,13 +14,11 @@ public class Client
     public Client(ClientType type)
     {
         Type = type;
-        Debug.Log($"[CLIENT CREATED] Type set to: {Type}");
     }
 
     public int CalculatePayout(string priceChoice, int reputation)
     {
         priceChoice = priceChoice.ToLower(); // Asegura minúsculas
-        Debug.Log($"[CALCULATION START] ClientType: {Type}, PriceChoice: {priceChoice}, Reputation: {reputation}");
 
         int baseAmount = 0;
 
@@ -57,8 +55,6 @@ public class Client
                 break;
         }
 
-        Debug.Log($"[BASE AMOUNT] Before modifier: {baseAmount}");
-
         float modifier = 1f;
 
         if (reputation >= 60) modifier = 1.15f;
@@ -67,8 +63,6 @@ public class Client
         else if (reputation <= -30) modifier = 0.90f;
 
         int finalAmount = Mathf.RoundToInt(baseAmount * modifier);
-        Debug.Log($"[FINAL PAYOUT] Base: {baseAmount}, Modifier: {modifier}, Final: {finalAmount}");
-
         return finalAmount;
     }
 }

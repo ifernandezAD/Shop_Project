@@ -25,9 +25,6 @@ public class ClientManager : MonoBehaviour
         currentClient = new Client(type);
 
         clientText.text = $"Client type: <b>{type}</b>";
-
-
-        Debug.Log($"[NEW CLIENT GENERATED] Type: {currentClient.Type}");
     }
 
     public void SellLow() => Sell("low");
@@ -36,8 +33,6 @@ public class ClientManager : MonoBehaviour
 
     private void Sell(string price)
     {
-        Debug.Log($"[SELL] Called with price: {price}, Client type: {currentClient?.Type}");
-
         if (currentClient == null) return;
 
         int rep = resources.GetReputation();

@@ -6,7 +6,8 @@ public class GameCalendar : MonoBehaviour
     [Header("Debug")]
     [SerializeField] bool debugAdvanceDay;
 
-    public TextMeshProUGUI calendarText; 
+    public TextMeshProUGUI calendarText;
+    public RentManager rentManager;
 
     private int currentDay = 1;
     private int currentWeek = 1;
@@ -36,16 +37,20 @@ public class GameCalendar : MonoBehaviour
     {
         if (currentDay >= totalDays)
         {
-            Debug.Log(" Game over: reached the final day.");
+            Debug.Log("Game Over: reached final day.");
             return;
         }
 
         currentDay++;
-
         currentWeek = ((currentDay - 1) / daysPerWeek) + 1;
 
         UpdateCalendarText();
         CheckEvents();
+
+        if (currentDay % 7 == 1)
+            Debug.Log("[EVENT] Weekly random event triggered");
+
+        rentManager.CheckForRent(currentDay);
     }
 
     private void CheckEvents()
