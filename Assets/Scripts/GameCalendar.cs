@@ -8,6 +8,7 @@ public class GameCalendar : MonoBehaviour
 
     public TextMeshProUGUI calendarText;
     public RentManager rentManager;
+    public EventManager eventManager;
 
     private int currentDay = 1;
     private int currentWeek = 1;
@@ -46,11 +47,6 @@ public class GameCalendar : MonoBehaviour
 
         UpdateCalendarText();
         CheckEvents();
-
-        if (currentDay % 7 == 1)
-            Debug.Log("[EVENT] Weekly random event triggered");
-
-        rentManager.CheckForRent(currentDay);
     }
 
     private void CheckEvents()
@@ -58,13 +54,29 @@ public class GameCalendar : MonoBehaviour
         // Weekly event
         if ((currentDay - 1) % daysPerWeek == 0)
         {
-            Debug.Log($" Week {currentWeek} begins — Weekly event triggered.");
+            Debug.Log($"Week {currentWeek} begins — Weekly event triggered.");
+            if (eventManager != null)
+            {
+                eventManager.TriggerWeeklyEvent(currentWeek);
+            }
+            else
+            {
+                Debug.LogWarning("EventManager reference missing!");
+            }
         }
 
         // Rent day
         if (currentDay % 15 == 0)
         {
-            Debug.Log($" Day {currentDay} — The landlord has arrived to collect rent.");
+            Debug.Log($"Day {currentDay} — The landlord has arrived to collect rent.");
+            if (rentManager != null)
+            {
+                rentManager.CheckForRent(currentDay);
+            }
+            else
+            {
+                Debug.LogWarning("RentManager reference missing!");
+            }
         }
     }
 
@@ -81,9 +93,9 @@ public class GameCalendar : MonoBehaviour
 
     private string GetCurrentMonth()
     {
-        if (currentDay <= 30) return monthNames[0];   // June
-        else if (currentDay <= 60) return monthNames[1];  // July
-        else return monthNames[2];  // August
+        if (currentDay <= 30) return monthNames[0];   
+        else if (currentDay <= 60) return monthNames[1];  
+        else return monthNames[2];  
     }
 
     private int GetDayInMonth()
