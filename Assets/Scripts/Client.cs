@@ -2,9 +2,9 @@ using UnityEngine;
 
 public enum ClientType
 {
-    Mean,      
-    Empathic,   
-    Demanding   
+    Mean,
+    Empathic,
+    Demanding
 }
 
 public class Client
@@ -14,10 +14,14 @@ public class Client
     public Client(ClientType type)
     {
         Type = type;
+        Debug.Log($"[CLIENT CREATED] Type set to: {Type}");
     }
 
     public int CalculatePayout(string priceChoice, int reputation)
     {
+        priceChoice = priceChoice.ToLower(); // Asegura minúsculas
+        Debug.Log($"[CALCULATION START] ClientType: {Type}, PriceChoice: {priceChoice}, Reputation: {reputation}");
+
         int baseAmount = 0;
 
         switch (Type)
@@ -36,8 +40,8 @@ public class Client
                 baseAmount = priceChoice switch
                 {
                     "low" => Random.Range(50, 61),
-                    "fair" => Random.Range(85, 96) + Random.Range(5, 11), // +propina
-                    "high" => Random.Range(40, 61), // A veces acepta
+                    "fair" => Random.Range(85, 96) + Random.Range(5, 11),
+                    "high" => Random.Range(40, 61),
                     _ => 0
                 };
                 break;
@@ -47,13 +51,14 @@ public class Client
                 {
                     "low" => Random.Range(40, 61),
                     "fair" => Random.Range(95, 111),
-                    "high" => Random.Range(0, 101), // Aleatorio
+                    "high" => Random.Range(0, 101),
                     _ => 0
                 };
                 break;
         }
 
-        // Modificadores por reputación
+        Debug.Log($"[BASE AMOUNT] Before modifier: {baseAmount}");
+
         float modifier = 1f;
 
         if (reputation >= 60) modifier = 1.15f;
@@ -61,6 +66,9 @@ public class Client
         else if (reputation <= -60) modifier = 0.75f;
         else if (reputation <= -30) modifier = 0.90f;
 
-        return Mathf.RoundToInt(baseAmount * modifier);
+        int finalAmount = Mathf.RoundToInt(baseAmount * modifier);
+        Debug.Log($"[FINAL PAYOUT] Base: {baseAmount}, Modifier: {modifier}, Final: {finalAmount}");
+
+        return finalAmount;
     }
 }
