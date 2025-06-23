@@ -25,15 +25,16 @@ public class ClientManager : MonoBehaviour
         currentClient = new Client(type);
 
         clientText.text = $"Client type: <b>{type}</b>";
+        feedbackText.text = GetClientHint(type);
     }
 
-    public void SellLow() => Sell("low");
-    public void SellFair() => Sell("fair");
-    public void SellHigh() => Sell("high");
+    public void SellLow() => StartCoroutine(Sell("low"));
+    public void SellFair() => StartCoroutine(Sell("fair"));
+    public void SellHigh() => StartCoroutine(Sell("high"));
 
-    private void Sell(string price)
+    private IEnumerator Sell(string price)
     {
-        if (currentClient == null) return;
+        if (currentClient == null) yield break;
 
         int rep = resources.GetReputation();
         int payout = currentClient.CalculatePayout(price, rep);
@@ -42,26 +43,70 @@ public class ClientManager : MonoBehaviour
         {
             resources.ChangeMoney(payout);
 
-            if (price.ToLower() == "fair") resources.ChangeReputation(+2);
-            else resources.ChangeReputation(+1);
+            if (price.ToLower() == "fair")
+                resources.ChangeReputation(+2);
+            else
+                resources.ChangeReputation(+1);
 
-            feedbackText.text = $"Sold for {payout}!";
+            feedbackText.text = GetSaleOutcomeMessage(currentClient.Type, price, payout, true);
         }
         else
         {
             resources.ChangeReputation(-5);
-            feedbackText.text = "Sale failed!";
+            feedbackText.text = GetSaleOutcomeMessage(currentClient.Type, price, payout, false);
         }
 
-        StartCoroutine(ClearFeedbackAfterDelay(2f)); 
+        yield return new WaitForSeconds(3f);
+
+        feedbackText.text = "";
 
         calendar.AdvanceDay();
         GenerateNewClient();
     }
 
-    private IEnumerator ClearFeedbackAfterDelay(float delay)
+    private string GetClientHint(ClientType type)
     {
-        yield return new WaitForSeconds(delay);
-        feedbackText.text = "";
+        switch (type)
+        {
+            case ClientType.Mean:
+                return "Hint: This client dislikes high prices.";
+            case ClientType.Empathic:
+                return "Hint: This client appreciates fairness and may tip.";
+            case ClientType.Demanding:
+                return "Hint: This client is picky, exact pricing matters.";
+            default:
+                return "";
+        }
+    }
+
+    private string GetSaleOutcomeMessage(ClientType type, string price, int payout, bool success)
+    {
+        if (!success)
+        {
+            return "The client left unhappy and without paying.";
+        }
+
+        switch (type)
+        {
+            case ClientType.Mean:
+                if (price == "low") return $"Sold for {payout}. Client is cautiously satisfied.";
+                if (price == "fair") return $"Sold for {payout}. Client is pleased.";
+                if (price == "high") return "Client rejected the price.";
+                break;
+
+            case ClientType.Empathic:
+                if (price == "low") return $"Sold for {payout}. Client appreciates the deal.";
+                if (price == "fair") return $"Sold for {payout}. Client is very happy and tips you!";
+                if (price == "high") return $"Sold for {payout}. Client accepted, but seems hesitant.";
+                break;
+
+            case ClientType.Demanding:
+                if (price == "low") return $"Sold for {payout}. Client is disappointed but buys.";
+                if (price == "fair") return $"Sold for {payout}. Client is satisfied.";
+                if (price == "high") return $"Sold for {payout}. Client is surprised but pays.";
+                break;
+        }
+
+        return $"Sold for {payout}.";
     }
 }
