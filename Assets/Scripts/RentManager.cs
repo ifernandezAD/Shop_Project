@@ -10,7 +10,7 @@ public class RentManager : MonoBehaviour
     public GameObject winPanel;
 
     private int[] paymentDays = { 15, 30, 45, 60, 75, 90 };
-    private int[] paymentAmounts = { 500, 700, 900, 1100, 1300, 1500 };
+    private int[] paymentAmounts = { 500, 800, 1100, 1450, 1800, 2200 };
     private int currentPaymentIndex = 0;
 
     public void CheckForRent(int currentDay)
